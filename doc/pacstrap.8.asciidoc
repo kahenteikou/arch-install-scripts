@@ -38,6 +38,8 @@ Options
 
 *-N*::
 	do not reinstall up to date packages.
+*-P*::
+	print the targets instead of performing the operation.
 
 *-U*::
 	Use pacman -U to install packages. Useful for obtaining fine-grained
