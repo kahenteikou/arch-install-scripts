@@ -16,6 +16,7 @@ hostcache=0
 copykeyring=1
 copymirrorlist=1
 pacmode=-Sy
+needed=0
 
 usage() {
   cat <<EOF
@@ -28,7 +29,7 @@ usage: ${0##*/} [options] root [packages...]
     -i             Prompt for package confirmation when needed (run interactively)
     -M             Avoid copying the host's mirrorlist to the target
     -U             Use pacman -U to install packages
-
+    -N             do not reinstall up to date packages
     -h             Print this help message
 
 pacstrap installs packages to the specified new root directory. If no packages
@@ -44,7 +45,7 @@ fi
 
 (( EUID == 0 )) || die 'This script must be run with root privileges'
 
-while getopts ':C:cdGiMU' flag; do
+while getopts ':C:cdGiMUN' flag; do
   case $flag in
     C)
       pacman_config=$OPTARG
@@ -67,6 +68,9 @@ while getopts ':C:cdGiMU' flag; do
     U)
       pacmode=-U
       ;;
+    N)
+      needed=1
+      ;;
     :)
       die '%s: option requires an argument -- '\''%s'\' "${0##*/}" "$OPTARG"
       ;;
@@ -87,6 +91,9 @@ fi
 
 if (( ! interactive )); then
   pacman_args+=(--noconfirm)
+fi
+if (( needed )); then
+  pacman_args+=(--needed)
 fi
 
 if [[ $pacman_config ]]; then
